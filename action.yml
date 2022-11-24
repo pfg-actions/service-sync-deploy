@@ -1,0 +1,24 @@
+name: 'Service sync deploy actions'
+description: 'Service sync deploy actions'
+inputs:
+  argocd-server:
+    required: true
+  argocd-auth-token:
+    required: true
+  argocd-app:
+    required: true
+  cf-access-client-id:
+    required: true
+  cf-access-client-secret:
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Sync
+      run: |
+        export ARGOCD_SERVER=${{ inputs.argocd-server }}
+        export ARGOCD_AUTH_TOKEN=${{ inputs.argocd-auth-token }}
+        curl -sSL -o /usr/local/bin/argocd https://${ARGOCD_SERVER}/download/argocd-linux-amd64 -H "CF-Access-Client-Id:${{ inputs.cf-access-client-id }}" -H "CF-Access-Client-Secret:${{ inputs.cf-access-client-secret }}"
+        argocd app sync ${{ inputs.argocd-app }} --grpc-web -H "CF-Access-Client-Id:${{ inputs.cf-access-client-id }}" -H "CF-Access-Client-Secret:${{ inputs.cf-access-client-secret }}"
+        argocd app wait ${{ inputs.argocd-app }} --grpc-web -H "CF-Access-Client-Id:${{ inputs.cf-access-client-id }}" -H "CF-Access-Client-Secret:${{ inputs.cf-access-client-secret }}"
+      shell: bash
