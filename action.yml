@@ -18,6 +18,7 @@ runs:
       run: |
         echo "ARGOCD_SERVER=${{ inputs.argocd-server }}" >> $GITHUB_ENV
         echo "ARGOCD_AUTH_TOKEN=${{ inputs.argocd-auth-token }}" >> $GITHUB_ENV
+      shell: bash
     - name: Sync
       run: |
         curl -sSL -o /usr/local/bin/argocd https://${ARGOCD_SERVER}/download/argocd-linux-amd64 -H "CF-Access-Client-Id:${{ inputs.cf-access-client-id }}" -H "CF-Access-Client-Secret:${{ inputs.cf-access-client-secret }}"
